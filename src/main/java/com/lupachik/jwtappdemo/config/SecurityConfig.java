@@ -2,6 +2,7 @@ package com.lupachik.jwtappdemo.config;
 
 import com.lupachik.jwtappdemo.security.jwt.JwtConfigurer;
 import com.lupachik.jwtappdemo.security.jwt.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,13 +13,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final JwtTokenProvider tokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private static final String ADMIN_ENDPOINT = "/api/v1/admin/**";
     private static final String LOGIN_ENDPOINT = "/api/v1/auth/login";
 
-    public SecurityConfig(JwtTokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
+    @Autowired
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Bean
@@ -39,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
-                .apply(new JwtConfigurer(tokenProvider));
+                .apply(new JwtConfigurer(jwtTokenProvider));
 
     }
 }
